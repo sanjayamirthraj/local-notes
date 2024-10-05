@@ -41,11 +41,24 @@ export default function GoogleMaps() {
 			});
 
 			const { Map } = await loader.importLibrary('maps');
-
-			const centerLocation = {
-				lat: 37.8685573,
-				lng: -122.256697,
+            
+            let centerLocation = {
+				lat: 137.8685573,
+				lng: 122.256697,
 			};
+			
+
+			// Get the user's current location
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition((position) => {
+					centerLocation = {
+						lat: position.coords.latitude,
+						lng: position.coords.longitude,
+					};
+				});
+			}
+
+            
 
 			const { AdvancedMarkerElement } = await loader.importLibrary('marker') as google.maps.MarkerLibrary;
 
@@ -65,7 +78,6 @@ export default function GoogleMaps() {
 						lng: position.coords.longitude,
 					};
 
-					// Create a marker for the user's current location
 					const userMarkerElement = document.createElement('div');
 					userMarkerElement.innerHTML = `
 						<div class="relative group">

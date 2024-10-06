@@ -1,12 +1,28 @@
-"use client";
-
+'use client'
 import React, { useEffect } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
+import {sql} from '@vercel/postgres';
 
 
 // Sample memories (you can replace these with your actual data)
 const getRandomCoordinate = (min: number, max: number) =>
   Math.random() * (max - min) + min;
+
+const fetchPins = async () => {
+  try {
+    const result = await sql`
+      SELECT latitude, longitude, message FROM location_data;
+    `;
+    return result.rows.map(row => ({
+      lat: row.latitude,
+      lng: row.longitude,
+      message: row.message,
+    }));
+  } catch (error) {
+    console.error("Error fetching pins:", error);
+    return [];
+  }
+};
 
 export default function GoogleMaps() {
   // defining the memories state

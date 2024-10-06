@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
-import { useMemories } from "../contexts/memories";
 
 // Define the Memory type
 type Memory = {
@@ -17,17 +16,16 @@ const getRandomCoordinate = (min: number, max: number) =>
 
 export default function GoogleMaps() {
   // defining the memories state
-  //   const [memories, setMemories] = useState([
-  //     { lat: 37.8685573, lng: -122.256697, message: "First memory" },
-  //     { lat: 37.8695573, lng: -122.257697, message: "Second memory" },
-  //     { lat: 37.8675573, lng: -122.255697, message: "Third memory" },
-  //     {
-  //       lat: getRandomCoordinate(37.86, 37.87),
-  //       lng: getRandomCoordinate(-122.26, -122.25),
-  //       message: "Fourth memory",
-  //     },
-  //   ]);
-  const { memories, addMemory } = useMemories();
+    const [memories, setMemories] = useState([
+      { lat: 37.8685573, lng: -122.256697, message: "First memory" },
+      { lat: 37.8695573, lng: -122.257697, message: "Second memory" },
+      { lat: 37.8675573, lng: -122.255697, message: "Third memory" },
+      {
+        lat: getRandomCoordinate(37.86, 37.87),
+        lng: getRandomCoordinate(-122.26, -122.25),
+        message: "Fourth memory",
+      },
+    ]);
 
   const mapRef = React.useRef<HTMLDivElement>(null);
   let currentInfoWindow: google.maps.InfoWindow | null = null;

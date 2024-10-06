@@ -1,7 +1,4 @@
-
-
 import { NextResponse } from 'next/server';
-import { useMemories } from '../../../components/contexts/memories';
 
 /*
 Format
@@ -25,8 +22,6 @@ let content = "";
 let in_note = false;
 
 export async function POST(request) {
-  const { memories, addMemory } = useMemories();
-
   const response = await request.json();
   
   for (let s of response.segments) {
@@ -42,7 +37,6 @@ export async function POST(request) {
       in_note != false;
 
       // Call create new pin function
-      addMemory({ lat: 37.8685573, lng: -122.256697, message: content })
 
       content = ""
     }
@@ -53,5 +47,3 @@ export async function POST(request) {
   return NextResponse.json({message: content});
   
 }
-
-console.log('i am taking ur data');

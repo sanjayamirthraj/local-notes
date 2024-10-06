@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { Pin } from "@/lib/types";
 
@@ -12,7 +12,7 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
   const memories = pins;
 
   const mapRef = React.useRef<HTMLDivElement>(null);
-  let currentInfoWindow: google.maps.InfoWindow | null = null;
+  const InfoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
   useEffect(() => {
     const initializeMap = async () => {
@@ -46,6 +46,8 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
         center: centerLocation,
         zoom: 15,
         mapId: "NEXT_MAPS_TUTS",
+        disableDefaultUI: true,
+        backgroundColor: "var(--bg-color)",
       };
 
       const map = new Map(mapRef.current as HTMLDivElement, options);
@@ -82,13 +84,13 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
         (memory: { lat: number; lng: number; message: string }) => {
           const markerElement = document.createElement("div");
           markerElement.innerHTML = `
-					<div class="relative group">
-						<div class="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full opacity-75 blur-sm group-hover:opacity-100 transition-opacity duration-300"></div>
-							<div class="relative w-6 h-6 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-110">
-							<div class="absolute inset-0.5 bg-gradient-to-br from-white to-transparent opacity-30 rounded-full"></div>
-						</div>
+          <div class="relative group">
+            <div class="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full opacity-75 blur-sm group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="relative w-6 h-6 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-110">
+              <div class="absolute inset-0.5 bg-gradient-to-br from-white to-transparent opacity-30 rounded-full"></div>
+            </div>
 					 </div>
-				`;
+          `;
 
           const marker = new AdvancedMarkerElement({
             map,
@@ -98,22 +100,23 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
 
           marker.addListener("click", () => {
             // Close the currently opened info window if it exists
-            if (currentInfoWindow) {
-              currentInfoWindow.close();
+            if (InfoWindowRef.current) {
+              InfoWindowRef.current.close();
             }
 
             // Create a new info window and open it
-            currentInfoWindow = new google.maps.InfoWindow({
-              content: memory.message,
+            InfoWindowRef.current = new google.maps.InfoWindow({
+              content: `<div class="dark:text-black">${memory.message}</div>`,
+              headerDisabled: true,
             });
-            currentInfoWindow.open(map, marker);
+            InfoWindowRef.current.open(map, marker);
           });
         },
       );
     };
 
     initializeMap();
-  }, []);
+  }, [memories]);
 
   return <div className="h-screen w-screen" ref={mapRef} />;
 }

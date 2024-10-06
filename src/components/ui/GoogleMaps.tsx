@@ -1,21 +1,20 @@
-'use client'
+"use client";
 import React, { useEffect } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
-import {sql} from '@vercel/postgres';
-
+import { sql } from "@vercel/postgres";
 
 // Sample memories (you can replace these with your actual data)
 const getRandomCoordinate = (min: number, max: number) =>
   Math.random() * (max - min) + min;
 
 interface GoogleMapsProps {
-  pins: any; 
+  pins: any;
 }
 
 export default function GoogleMaps({ pins }: GoogleMapsProps) {
   // defining the memories state
   const memories = pins;
-  console.log(memories)
+  console.log(memories);
 
   const mapRef = React.useRef<HTMLDivElement>(null);
   let currentInfoWindow: google.maps.InfoWindow | null = null;
@@ -45,7 +44,7 @@ export default function GoogleMaps({ pins }: GoogleMapsProps) {
       }
 
       const { AdvancedMarkerElement } = (await loader.importLibrary(
-        "marker"
+        "marker",
       )) as google.maps.MarkerLibrary;
 
       const options: google.maps.MapOptions = {
@@ -78,17 +77,16 @@ export default function GoogleMaps({ pins }: GoogleMapsProps) {
             map,
             position: userLocation,
             content: userMarkerElement,
-            
           });
-          console.log('User Marker Position:', userMarker.position);
+          console.log("User Marker Position:", userMarker.position);
         });
-          
       }
 
       // Create markers and info windows for each memory
-      memories.forEach((memory: { lat: number; lng: number; message: string }) => {
-        const markerElement = document.createElement("div");
-        markerElement.innerHTML = `
+      memories.forEach(
+        (memory: { lat: number; lng: number; message: string }) => {
+          const markerElement = document.createElement("div");
+          markerElement.innerHTML = `
 					<div class="relative group">
 						<div class="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full opacity-75 blur-sm group-hover:opacity-100 transition-opacity duration-300"></div>
 							<div class="relative w-6 h-6 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-110">
@@ -97,25 +95,26 @@ export default function GoogleMaps({ pins }: GoogleMapsProps) {
 					 </div>
 				`;
 
-        const marker = new AdvancedMarkerElement({
-          map,
-          position: { lat: memory.lat, lng: memory.lng },
-          content: markerElement,
-        });
-
-        marker.addListener("click", () => {
-          // Close the currently opened info window if it exists
-          if (currentInfoWindow) {
-            currentInfoWindow.close();
-          }
-
-          // Create a new info window and open it
-          currentInfoWindow = new google.maps.InfoWindow({
-            content: memory.message,
+          const marker = new AdvancedMarkerElement({
+            map,
+            position: { lat: memory.lat, lng: memory.lng },
+            content: markerElement,
           });
-          currentInfoWindow.open(map, marker);
-        });
-      });
+
+          marker.addListener("click", () => {
+            // Close the currently opened info window if it exists
+            if (currentInfoWindow) {
+              currentInfoWindow.close();
+            }
+
+            // Create a new info window and open it
+            currentInfoWindow = new google.maps.InfoWindow({
+              content: memory.message,
+            });
+            currentInfoWindow.open(map, marker);
+          });
+        },
+      );
     };
 
     initializeMap();

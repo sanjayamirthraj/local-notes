@@ -1,6 +1,5 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
-
 
 /*
 Format
@@ -29,22 +28,22 @@ export async function POST(request) {
   for (const segment of response.segments) {
     const lowerText = segment.text.toLowerCase();
 
-    if (lowerText.includes('start') && !in_note) {
+    if (lowerText.includes("start") && !in_note) {
       in_note = true;
-      content = ''; // Reset content when starting a new note
+      content = ""; // Reset content when starting a new note
     }
 
     if (in_note) {
-      content += ' ' + segment.text;
+      content += " " + segment.text;
     }
 
-    if (lowerText.includes('finish') && in_note) {
+    if (lowerText.includes("finish") && in_note) {
       in_note = false;
 
       // TODO: Implement create new pin function
       await createNewPin(content.trim());
 
-      content = '';
+      content = "";
     }
   }
 
@@ -67,8 +66,8 @@ async function createNewPin(noteContent) {
   try {
     // Execute the SQL query
     await sql.query(query);
-    console.log('Creating new pin with content:', noteContent);
+    console.log("Creating new pin with content:", noteContent);
   } catch (error) {
-    console.error('Error creating new pin:', error);
+    console.error("Error creating new pin:", error);
   }
 }

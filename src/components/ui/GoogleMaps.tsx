@@ -62,11 +62,11 @@ export default function GoogleMaps() {
 
       // Get the user's current location
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(() => {
-          // const userLocation = {
-          //   lat: position.coords.latitude,
-          //   lng: position.coords.longitude,
-          // };
+        navigator.geolocation.getCurrentPosition((position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
 
           const userMarkerElement = document.createElement("div");
           userMarkerElement.innerHTML = `
@@ -78,12 +78,15 @@ export default function GoogleMaps() {
 						</div>
 					`;
 
-          // const userMarker = new AdvancedMarkerElement({
-          //   map,
-          //   position: userLocation,
-          //   content: userMarkerElement,
-          // });
+          const userMarker = new AdvancedMarkerElement({
+            map,
+            position: userLocation,
+            content: userMarkerElement,
+            
+          });
+          console.log('User Marker Position:', userMarker.position);
         });
+          
       }
 
       // Create markers and info windows for each memory

@@ -40,7 +40,7 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
       }
 
       const { AdvancedMarkerElement } = (await loader.importLibrary(
-        "marker"
+        "marker",
       )) as google.maps.MarkerLibrary;
 
       const options: google.maps.MapOptions = {
@@ -109,7 +109,7 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
             });
             currentInfoWindow.open(map, marker);
           });
-        }
+        },
       );
     };
 

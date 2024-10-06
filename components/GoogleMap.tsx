@@ -7,11 +7,7 @@ import { Pin } from "@/lib/types";
 // const getRandomCoordinate = (min: number, max: number) =>
 //   Math.random() * (max - min) + min;
 
-interface GoogleMapsProps {
-  pins: Pin[];
-}
-
-export default function GoogleMap({ pins }: GoogleMapsProps) {
+export default function GoogleMap({ pins }: { pins: Pin[] }) {
   // defining the memories state
   const memories = pins;
   console.log(memories);

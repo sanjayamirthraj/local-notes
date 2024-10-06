@@ -8,34 +8,14 @@ import {sql} from '@vercel/postgres';
 const getRandomCoordinate = (min: number, max: number) =>
   Math.random() * (max - min) + min;
 
-const fetchPins = async () => {
-  try {
-    const result = await sql`
-      SELECT latitude, longitude, message FROM location_data;
-    `;
-    return result.rows.map(row => ({
-      lat: row.latitude,
-      lng: row.longitude,
-      message: row.message,
-    }));
-  } catch (error) {
-    console.error("Error fetching pins:", error);
-    return [];
-  }
-};
+interface GoogleMapsProps {
+  pins: any; 
+}
 
-export default function GoogleMaps() {
+export default function GoogleMaps({ pins }: GoogleMapsProps) {
   // defining the memories state
-    const memories = [
-      { lat: 37.8685573, lng: -122.256697, message: "First memory" },
-      { lat: 37.8695573, lng: -122.257697, message: "Second memory" },
-      { lat: 37.8675573, lng: -122.255697, message: "Third memory" },
-      {
-        lat: getRandomCoordinate(37.86, 37.87),
-        lng: getRandomCoordinate(-122.26, -122.25),
-        message: "Fourth memory",
-      },
-    ];
+  const memories = pins;
+  console.log(memories)
 
   const mapRef = React.useRef<HTMLDivElement>(null);
   let currentInfoWindow: google.maps.InfoWindow | null = null;

@@ -1,37 +1,30 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
+import { MemoriesProvider } from '../contexts/memories';
 
 // Define the Memory type
 type Memory = {
-  lat: number;
-  lng: number;
-  message: string;
+	lat: number;
+	lng: number;
+	message: string;
 };
 
 // Sample memories (you can replace these with your actual data)
 const getRandomCoordinate = (min: number, max: number) => Math.random() * (max - min) + min;
 
-const memories: Memory[] = [
-  { lat: 37.8685573, lng: -122.256697, message: "First memory" },
-  { lat: 37.8695573, lng: -122.257697, message: "Second memory" },
-  { lat: 37.8675573, lng: -122.255697, message: "Third memory" },
-  { lat: getRandomCoordinate(37.8600, 37.8700), lng: getRandomCoordinate(-122.2600, -122.2500), message: "Fourth memory" },
-  { lat: getRandomCoordinate(37.8600, 37.8700), lng: getRandomCoordinate(-122.2600, -122.2500), message: "Fifth memory" },
-  { lat: getRandomCoordinate(37.8600, 37.8700), lng: getRandomCoordinate(-122.2600, -122.2500), message: "Sixth memory" },
-  { lat: getRandomCoordinate(37.8600, 37.8700), lng: getRandomCoordinate(-122.2600, -122.2500), message: "Seventh memory" },
-  { lat: getRandomCoordinate(37.8600, 37.8700), lng: getRandomCoordinate(-122.2600, -122.2500), message: "Eighth memory" },
-  { lat: getRandomCoordinate(37.8600, 37.8700), lng: getRandomCoordinate(-122.2600, -122.2500), message: "Ninth memory" },
-  { lat: getRandomCoordinate(37.8600, 37.8700), lng: getRandomCoordinate(-122.2600, -122.2500), message: "Tenth memory" },
-  { lat: getRandomCoordinate(37.8600, 37.8700), lng: getRandomCoordinate(-122.2600, -122.2500), message: "Eleventh memory" },
-  { lat: getRandomCoordinate(37.8600, 37.8700), lng: getRandomCoordinate(-122.2600, -122.2500), message: "Twelfth memory" },
-  { lat: getRandomCoordinate(37.8600, 37.8700), lng: getRandomCoordinate(-122.2600, -122.2500), message: "Thirteenth memory" },
-];
-
 export default function GoogleMaps() {
+	// defining the memories state
+	const [memories, setMemories] = useState([
+		{ lat: 37.8685573, lng: -122.256697, message: "First memory" },
+		{ lat: 37.8695573, lng: -122.257697, message: "Second memory" },
+		{ lat: 37.8675573, lng: -122.255697, message: "Third memory" },
+		{ lat: getRandomCoordinate(37.8600, 37.8700), lng: getRandomCoordinate(-122.2600, -122.2500), message: "Fourth memory" },
+	])
+	
 	const mapRef = React.useRef<HTMLDivElement>(null);
-	let currentInfoWindow: google.maps.InfoWindow | null = null; 
+	let currentInfoWindow: google.maps.InfoWindow | null = null;
 
 	useEffect(() => {
 		const initializeMap = async () => {
@@ -41,12 +34,12 @@ export default function GoogleMaps() {
 			});
 
 			const { Map } = await loader.importLibrary('maps');
-            
-            let centerLocation = {
+
+			let centerLocation = {
 				lat: 137.8685573,
 				lng: 122.256697,
 			};
-			
+
 
 			// Get the user's current location
 			if (navigator.geolocation) {
@@ -58,7 +51,7 @@ export default function GoogleMaps() {
 				});
 			}
 
-            
+
 
 			const { AdvancedMarkerElement } = await loader.importLibrary('marker') as google.maps.MarkerLibrary;
 

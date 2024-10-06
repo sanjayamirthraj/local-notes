@@ -1,14 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 
-// Define the Memory type
-type Memory = {
-  lat: number;
-  lng: number;
-  message: string;
-};
 
 // Sample memories (you can replace these with your actual data)
 const getRandomCoordinate = (min: number, max: number) =>
@@ -16,7 +10,7 @@ const getRandomCoordinate = (min: number, max: number) =>
 
 export default function GoogleMaps() {
   // defining the memories state
-    const [memories, setMemories] = useState([
+    const memories = [
       { lat: 37.8685573, lng: -122.256697, message: "First memory" },
       { lat: 37.8695573, lng: -122.257697, message: "Second memory" },
       { lat: 37.8675573, lng: -122.255697, message: "Third memory" },
@@ -25,7 +19,7 @@ export default function GoogleMaps() {
         lng: getRandomCoordinate(-122.26, -122.25),
         message: "Fourth memory",
       },
-    ]);
+    ];
 
   const mapRef = React.useRef<HTMLDivElement>(null);
   let currentInfoWindow: google.maps.InfoWindow | null = null;
@@ -68,11 +62,11 @@ export default function GoogleMaps() {
 
       // Get the user's current location
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          const userLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
+        navigator.geolocation.getCurrentPosition(() => {
+          // const userLocation = {
+          //   lat: position.coords.latitude,
+          //   lng: position.coords.longitude,
+          // };
 
           const userMarkerElement = document.createElement("div");
           userMarkerElement.innerHTML = `
@@ -84,16 +78,16 @@ export default function GoogleMaps() {
 						</div>
 					`;
 
-          const userMarker = new AdvancedMarkerElement({
-            map,
-            position: userLocation,
-            content: userMarkerElement,
-          });
+          // const userMarker = new AdvancedMarkerElement({
+          //   map,
+          //   position: userLocation,
+          //   content: userMarkerElement,
+          // });
         });
       }
 
       // Create markers and info windows for each memory
-      memories.forEach((memory: any, index: any) => {
+      memories.forEach((memory: { lat: number; lng: number; message: string }) => {
         const markerElement = document.createElement("div");
         markerElement.innerHTML = `
 					<div class="relative group">

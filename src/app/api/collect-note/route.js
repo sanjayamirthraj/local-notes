@@ -23,27 +23,36 @@ let in_note = false;
 
 export async function POST(request) {
   const response = await request.json();
-  
-  for (let s of response.segments) {
-    if (s.text.toLowerCase().includes('start')) {
+
+  for (const segment of response.segments) {
+    const lowerText = segment.text.toLowerCase();
+
+    if (lowerText.includes('start') && !in_note) {
       in_note = true;
+      content = ''; // Reset content when starting a new note
     }
 
     if (in_note) {
-        content += ' ' + s.text;
+      content += ' ' + segment.text;
     }
 
-    if (s.text.toLowerCase().includes('finish')) {
-      in_note != false;
+    if (lowerText.includes('finish') && in_note) {
+      in_note = false;
 
-      // Call create new pin function
+      // TODO: Implement create new pin function
+      await createNewPin(content.trim());
 
-      content = ""
+      content = '';
     }
   }
-    
+
   console.log(content);
 
-  return NextResponse.json({message: content});
-  
+  return NextResponse.json({ message: content });
+}
+
+async function createNewPin(noteContent) {
+  // TODO: Implement the logic to create a new pin
+  console.log('Creating new pin with content:', noteContent);
+  // Add your pin creation logic here
 }

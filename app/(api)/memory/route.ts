@@ -21,9 +21,10 @@ export async function POST(request: Request) {
     const startIndex = transcript.toLowerCase().indexOf("start");
     const finishIndex = transcript.toLowerCase().indexOf("finish");
 
-    const message = startIndex !== -1 && finishIndex !== -1 && startIndex < finishIndex
-      ? transcript.substring(startIndex + "start".length, finishIndex).trim()
-      : "";
+    const message =
+      startIndex !== -1 && finishIndex !== -1 && startIndex < finishIndex
+        ? transcript.substring(startIndex + "start".length, finishIndex).trim()
+        : "";
 
     const geolocation: Geolocation = {
       latitude: data.location.latitude,

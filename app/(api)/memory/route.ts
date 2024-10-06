@@ -18,6 +18,13 @@ export async function POST(request: Request) {
       .map((segment) => segment.text)
       .join(" ");
 
+    const startIndex = transcript.toLowerCase().indexOf("start");
+    const finishIndex = transcript.toLowerCase().indexOf("finish");
+
+    const message = startIndex !== -1 && finishIndex !== -1 && startIndex < finishIndex
+      ? transcript.substring(startIndex + "start".length, finishIndex).trim()
+      : "";
+
     const geolocation: Geolocation = {
       latitude: data.location.latitude,
       longitude: data.location.longitude,
@@ -28,7 +35,7 @@ export async function POST(request: Request) {
 
     const query = `
     INSERT INTO location_data (latitude, longitude, message)
-    VALUES (${geolocation.latitude}, ${geolocation.longitude}, '${transcript}');
+    VALUES (${geolocation.latitude}, ${geolocation.longitude}, '${message}');
   `;
     try {
       // Execute the SQL query

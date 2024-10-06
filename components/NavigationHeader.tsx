@@ -1,7 +1,8 @@
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Map } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Menu, MapPinned } from "lucide-react";
 import Link from "next/link";
 
 const navigation = [
@@ -19,13 +20,17 @@ export function NavigationHeader() {
           href="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
-          <Map className="h-6 w-6" />
+          <MapPinned className="h-6 w-6" />
           <span className="sr-only">Map Notes</span>
         </Link>
         {navigation.map((link) => (
-          <Link key={link.href} href={link.href} className={linkClasses}>
-            {link.label}
-          </Link>
+          <Button
+            key={link.href}
+            variant={"link"}
+            className={cn(linkClasses, "p-0")}
+          >
+            <Link href={link.href}>{link.label}</Link>
+          </Button>
         ))}
       </nav>
       <Sheet>
@@ -41,7 +46,7 @@ export function NavigationHeader() {
               href="#"
               className="flex items-center gap-2 text-lg font-semibold"
             >
-              <Map className="h-6 w-6" />
+              <MapPinned className="h-6 w-6" />
               <span className="sr-only">Map Notes</span>
             </Link>
             {navigation.map((link) => (

@@ -1,10 +1,12 @@
-interface Geolocation {
+import { sql } from "@vercel/postgres";
+
+type Geolocation = {
   latitude: number;
   longitude: number;
-  googlePlaceId: string?;
-  address: string?;
-  locationType: string?;
-}
+  googlePlaceId: string | null;
+  address: string | null;
+  locationType: string | null;
+};
 
 export async function POST(request: Request) {
   try {
@@ -26,7 +28,17 @@ export async function POST(request: Request) {
     };
     console.log("Geolocation:", geolocation);
 
-    // TODO: Save to database
+    const query = `
+    INSERT INTO location_data (latitude, longitude, message)
+    VALUES (${geolocation.latitude}, ${geolocation.longitude}, '${transcript}');
+  `;
+    try {
+      // Execute the SQL query
+      await sql.query(query);
+      console.log("Creating new pin with content:", transcript);
+    } catch (error) {
+      console.error("Error creating new pin:", error);
+    }
   } catch (error) {
     return new Response(`Webhook error: ${error.message}`, {
       status: 400,

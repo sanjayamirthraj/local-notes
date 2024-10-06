@@ -1,17 +1,17 @@
 "use client";
 import React, { useEffect } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
-import { sql } from "@vercel/postgres";
+import { Pin } from "@/lib/types";
 
 // Sample memories (you can replace these with your actual data)
-const getRandomCoordinate = (min: number, max: number) =>
-  Math.random() * (max - min) + min;
+// const getRandomCoordinate = (min: number, max: number) =>
+//   Math.random() * (max - min) + min;
 
 interface GoogleMapsProps {
-  pins: any;
+  pins: Pin[];
 }
 
-export default function GoogleMaps({ pins }: GoogleMapsProps) {
+export default function GoogleMap({ pins }: GoogleMapsProps) {
   // defining the memories state
   const memories = pins;
   console.log(memories);
@@ -44,7 +44,7 @@ export default function GoogleMaps({ pins }: GoogleMapsProps) {
       }
 
       const { AdvancedMarkerElement } = (await loader.importLibrary(
-        "marker",
+        "marker"
       )) as google.maps.MarkerLibrary;
 
       const options: google.maps.MapOptions = {
@@ -113,7 +113,7 @@ export default function GoogleMaps({ pins }: GoogleMapsProps) {
             });
             currentInfoWindow.open(map, marker);
           });
-        },
+        }
       );
     };
 

@@ -1,11 +1,12 @@
-import GoogleMaps from "@/components/ui/GoogleMaps";
+import GoogleMap from "@/components/GoogleMap";
+import { Pin } from "@/lib/types";
 import { sql } from "@vercel/postgres";
 
-export const fetchPins = async () => {
+export const fetchPins = async (): Promise<Pin[]> => {
   try {
     const result = await sql`
-      SELECT latitude, longitude, message FROM location_data;
-    `;
+        SELECT latitude, longitude, message FROM location_data;
+      `;
     return result.rows.map((row) => ({
       lat: parseFloat(row.latitude),
       lng: parseFloat(row.longitude),
@@ -17,11 +18,7 @@ export const fetchPins = async () => {
   }
 };
 
-export default async function Home() {
+export default async function PinMap() {
   const listOfPins = await fetchPins();
-  return (
-    <div>
-      <GoogleMaps pins={listOfPins} />
-    </div>
-  );
+  return <GoogleMap pins={listOfPins} />;
 }

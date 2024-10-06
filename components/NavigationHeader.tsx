@@ -60,6 +60,20 @@ export function NavigationHeader() {
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <div className="ml-auto flex-1 sm:flex-initial">
           <div className="flex justify-end gap-2">
+            <div className="text-xs text-muted-foreground my-auto mr-1">
+              created by{" "}
+              <Button asChild variant={"link"} className="text-xs p-0">
+                <Link href="https://x.com/sanjayamirthraj">Sanjay</Link>
+              </Button>
+              ,{" "}
+              <Button asChild variant={"link"} className="text-xs p-0">
+                <Link href="https://x.com/jamesoncrate">Jameson</Link>
+              </Button>
+              , &{" "}
+              <Button asChild variant={"link"} className="text-xs p-0">
+                <Link href="https://x.com/ravi_riley">Ravi</Link>
+              </Button>
+            </div>
             <ThemeToggle />
           </div>
         </div>

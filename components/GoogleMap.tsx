@@ -1,18 +1,12 @@
 "use client";
-import React, { useEffect } from "react";
+
+import React, { useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { Pin } from "@/lib/types";
 
-// Sample memories (you can replace these with your actual data)
-// const getRandomCoordinate = (min: number, max: number) =>
-//   Math.random() * (max - min) + min;
-
 export default function GoogleMap({ pins }: { pins: Pin[] }) {
-  // defining the memories state
-  const memories = pins;
-
-  const mapRef = React.useRef<HTMLDivElement>(null);
-  let currentInfoWindow: google.maps.InfoWindow | null = null;
+  const mapRef = useRef<HTMLDivElement>(null);
+  const currentInfoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
   useEffect(() => {
     const initializeMap = async () => {
@@ -22,6 +16,9 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
       });
 
       const { Map } = await loader.importLibrary("maps");
+      const { AdvancedMarkerElement } = (await loader.importLibrary(
+        "marker",
+      )) as google.maps.MarkerLibrary;
 
       let centerLocation = {
         lat: 137.8685573,
@@ -38,9 +35,30 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
         });
       }
 
-      const { AdvancedMarkerElement } = (await loader.importLibrary(
-        "marker",
-      )) as google.maps.MarkerLibrary;
+      const createMarkerElement = (isUser: boolean) => {
+        const markerElement = document.createElement("div");
+        markerElement.className = "relative group";
+
+        const gradientDiv = document.createElement("div");
+        gradientDiv.className = `absolute inset-0 bg-gradient-to-br ${
+          isUser ? "from-red-400 to-red-600" : "from-purple-400 to-blue-500"
+        } rounded-full opacity-75 blur-sm group-hover:opacity-100 transition-opacity duration-300`;
+
+        const innerDiv = document.createElement("div");
+        innerDiv.className = `relative w-6 h-6 bg-gradient-to-br ${
+          isUser ? "from-red-500 to-red-700" : "from-purple-500 to-blue-600"
+        } rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-110`;
+
+        const shineDiv = document.createElement("div");
+        shineDiv.className =
+          "absolute inset-0.5 bg-gradient-to-br from-white to-transparent opacity-30 rounded-full";
+
+        innerDiv.appendChild(shineDiv);
+        markerElement.appendChild(gradientDiv);
+        markerElement.appendChild(innerDiv);
+
+        return markerElement;
+      };
 
       const options: google.maps.MapOptions = {
         center: centerLocation,
@@ -50,7 +68,7 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
 
       const map = new Map(mapRef.current as HTMLDivElement, options);
 
-      // Get the user's current location
+      // Create user marker
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           const userLocation = {
@@ -58,62 +76,38 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
             lng: position.coords.longitude,
           };
 
-          const userMarkerElement = document.createElement("div");
-          userMarkerElement.innerHTML = `
-						<div class="relative group">
-							<div class="absolute inset-0 bg-gradient-to-br from-red-400 to-red-600 rounded-full opacity-75 blur-sm group-hover:opacity-100 transition-opacity duration-300"></div>
-							<div class="relative w-6 h-6 bg-gradient-to-br from-red-500 to-red-700 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-110">
-								<div class="absolute inset-0.5 bg-gradient-to-br from-white to-transparent opacity-30 rounded-full"></div>
-							</div>
-						</div>
-					`;
-
           const userMarker = new AdvancedMarkerElement({
             map,
             position: userLocation,
-            content: userMarkerElement,
+            content: createMarkerElement(true),
           });
           console.log("User Marker Position:", userMarker.position);
         });
       }
 
-      // Create markers and info windows for each memory
-      memories.forEach(
-        (memory: { lat: number; lng: number; message: string }) => {
-          const markerElement = document.createElement("div");
-          markerElement.innerHTML = `
-					<div class="relative group">
-						<div class="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full opacity-75 blur-sm group-hover:opacity-100 transition-opacity duration-300"></div>
-							<div class="relative w-6 h-6 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-110">
-							<div class="absolute inset-0.5 bg-gradient-to-br from-white to-transparent opacity-30 rounded-full"></div>
-						</div>
-					 </div>
-				`;
+      // Create markers for memories
+      pins.forEach((pin) => {
+        const marker = new AdvancedMarkerElement({
+          map,
+          position: { lat: pin.lat, lng: pin.lng },
+          content: createMarkerElement(false),
+        });
 
-          const marker = new AdvancedMarkerElement({
-            map,
-            position: { lat: memory.lat, lng: memory.lng },
-            content: markerElement,
+        marker.addListener("click", () => {
+          if (currentInfoWindowRef.current) {
+            currentInfoWindowRef.current.close();
+          }
+
+          currentInfoWindowRef.current = new google.maps.InfoWindow({
+            content: pin.message,
           });
-
-          marker.addListener("click", () => {
-            // Close the currently opened info window if it exists
-            if (currentInfoWindow) {
-              currentInfoWindow.close();
-            }
-
-            // Create a new info window and open it
-            currentInfoWindow = new google.maps.InfoWindow({
-              content: memory.message,
-            });
-            currentInfoWindow.open(map, marker);
-          });
-        },
-      );
+          currentInfoWindowRef.current.open(map, marker);
+        });
+      });
     };
 
     initializeMap();
-  }, []);
+  }, [pins]);
 
   return <div className="h-screen w-screen" ref={mapRef} />;
 }

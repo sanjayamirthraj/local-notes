@@ -1,5 +1,7 @@
+
+
 import { NextResponse } from 'next/server';
-import { useMemories } from '../components/contexts/memories';
+import { useMemories } from '../../../components/contexts/memories';
 
 /*
 Format

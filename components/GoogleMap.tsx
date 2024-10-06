@@ -10,7 +10,6 @@ import { Pin } from "@/lib/types";
 export default function GoogleMap({ pins }: { pins: Pin[] }) {
   // defining the memories state
   const memories = pins;
-  console.log(memories);
 
   const mapRef = React.useRef<HTMLDivElement>(null);
   let currentInfoWindow: google.maps.InfoWindow | null = null;
@@ -40,7 +39,7 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
       }
 
       const { AdvancedMarkerElement } = (await loader.importLibrary(
-        "marker"
+        "marker",
       )) as google.maps.MarkerLibrary;
 
       const options: google.maps.MapOptions = {
@@ -109,7 +108,7 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
             });
             currentInfoWindow.open(map, marker);
           });
-        }
+        },
       );
     };
 

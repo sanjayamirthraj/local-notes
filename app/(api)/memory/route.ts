@@ -17,7 +17,6 @@ export async function POST(request: Request) {
     const transcript = data.transcript_segments
       .map((segment) => segment.text)
       .join(" ");
-    console.log("Full transcript:", transcript);
 
     const geolocation: Geolocation = {
       latitude: data.location.latitude,
@@ -26,7 +25,6 @@ export async function POST(request: Request) {
       address: data.location.address,
       locationType: data.location.location_type,
     };
-    console.log("Geolocation:", geolocation);
 
     const query = `
     INSERT INTO location_data (latitude, longitude, message)
@@ -35,7 +33,6 @@ export async function POST(request: Request) {
     try {
       // Execute the SQL query
       await sql.query(query);
-      console.log("Creating new pin with content:", transcript);
     } catch (error) {
       console.error("Error creating new pin:", error);
     }

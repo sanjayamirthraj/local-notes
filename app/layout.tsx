@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NavigationHeader } from "@/components/NavigationHeader";
+import { SelectedPinProvider } from "@/components/SplitView";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -37,7 +38,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <NavigationHeader />
-          {children}
+          <SelectedPinProvider>{children}</SelectedPinProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,18 +1,16 @@
 "use client";
+
 import React, { useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { Pin } from "@/lib/types";
-
-// Sample memories (you can replace these with your actual data)
-// const getRandomCoordinate = (min: number, max: number) =>
-//   Math.random() * (max - min) + min;
+import { useSelectedPin } from "@/components/SplitView";
 
 export default function GoogleMap({ pins }: { pins: Pin[] }) {
-  // defining the memories state
-  const memories = pins;
+  const { selectedPin, setSelectedPin } = useSelectedPin();
 
   const mapRef = React.useRef<HTMLDivElement>(null);
   const InfoWindowRef = useRef<google.maps.InfoWindow | null>(null);
+  const markersRef = useRef<Map<string, google.maps.Marker>>(new Map());
 
   useEffect(() => {
     const initializeMap = async () => {
@@ -52,6 +50,8 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
 
       const map = new Map(mapRef.current as HTMLDivElement, options);
 
+      map.setCenter(centerLocation);
+
       // Get the user's current location
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -70,53 +70,78 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
 						</div>
 					`;
 
-          const userMarker = new AdvancedMarkerElement({
+          new AdvancedMarkerElement({
             map,
             position: userLocation,
             content: userMarkerElement,
           });
-          console.log("User Marker Position:", userMarker.position);
         });
       }
 
-      // Create markers and info windows for each memory
-      memories.forEach(
-        (memory: { lat: number; lng: number; message: string }) => {
-          const markerElement = document.createElement("div");
-          markerElement.innerHTML = `
+      // Create markers and store them in markersRef
+      pins.forEach((pin) => {
+        const markerElement = document.createElement("div");
+        markerElement.innerHTML = `
           <div class="relative group">
             <div class="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full opacity-75 blur-sm group-hover:opacity-100 transition-opacity duration-300"></div>
             <div class="relative w-6 h-6 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-110">
               <div class="absolute inset-0.5 bg-gradient-to-br from-white to-transparent opacity-30 rounded-full"></div>
             </div>
-					 </div>
-          `;
+          </div>
+        `;
 
-          const marker = new AdvancedMarkerElement({
-            map,
-            position: { lat: memory.lat, lng: memory.lng },
-            content: markerElement,
-          });
+        const marker = new AdvancedMarkerElement({
+          map,
+          position: { lat: pin.lat, lng: pin.lng },
+          content: markerElement,
+        });
 
-          marker.addListener("click", () => {
-            // Close the currently opened info window if it exists
-            if (InfoWindowRef.current) {
-              InfoWindowRef.current.close();
-            }
+        // Store marker with a unique identifier (e.g., message)
+        markersRef.current.set(pin.message, marker as never);
 
-            // Create a new info window and open it
-            InfoWindowRef.current = new google.maps.InfoWindow({
-              content: `<div class="dark:text-black">${memory.message}</div>`,
-              headerDisabled: true,
-            });
-            InfoWindowRef.current.open(map, marker);
-          });
-        },
-      );
+        marker.addListener("click", () => {
+          setSelectedPin(pin);
+        });
+      });
     };
 
     initializeMap();
-  }, [memories]);
+  }, [pins, setSelectedPin]);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    const loader = new Loader({
+      apiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY as string,
+      version: "quarterly",
+    });
+
+    loader.load().then(() => {
+      // Assuming the map has been initialized
+      // Close the previous InfoWindow
+      if (InfoWindowRef.current) {
+        InfoWindowRef.current.close();
+      }
+
+      if (selectedPin) {
+        const marker = markersRef.current.get(selectedPin.message);
+        if (marker) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const map = (marker as any).map; // Access the map from the marker
+          const infoWindow = new google.maps.InfoWindow({
+            content: `<div class="dark:text-black">${selectedPin.message}</div>`,
+            pixelOffset: new google.maps.Size(0, -30),
+          });
+
+          infoWindow.open(map, marker);
+          InfoWindowRef.current = infoWindow;
+
+          // Optionally, center the map on the selected marker
+          map.panTo({ lat: selectedPin.lat, lng: selectedPin.lng });
+        }
+      }
+    });
+  }, [selectedPin]);
 
   return <div className="h-screen w-screen" ref={mapRef} />;
 }

@@ -40,13 +40,11 @@ interface SplitViewClientProps {
 
 export default function SplitViewClient({ pins }: SplitViewClientProps) {
   return (
-    <SelectedPinProvider>
-      <div className="flex flex-row">
-        <div className="w-1/2 px-2">
-          <DataTable columns={columns} data={pins} />
-        </div>
-        <GoogleMap pins={pins} />
+    <div className="flex flex-row">
+      <GoogleMap pins={pins} />
+      <div className="w-1/2 px-2">
+        <DataTable columns={columns} data={pins} />
       </div>
-    </SelectedPinProvider>
+    </div>
   );
 }

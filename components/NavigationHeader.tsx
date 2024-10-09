@@ -6,7 +6,8 @@ import { Menu, MapPinned } from "lucide-react";
 import Link from "next/link";
 
 const navigation = [
-  { href: "/", label: "Map" },
+  { href: "/", label: "Split" },
+  { href: "/map", label: "Map" },
   { href: "/pins", label: "All Pins" },
 ];
 

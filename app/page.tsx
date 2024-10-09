@@ -1,9 +1,8 @@
-import PinMap from "@/components/PinMap";
+import SplitViewClient from "@/components/SplitView";
+import { fetchPins } from "@/lib/fetchPins";
 
-export default function Home() {
-  return (
-    <div>
-      <PinMap />
-    </div>
-  );
+export default async function SplitView() {
+  const pins = await fetchPins();
+
+  return <SplitViewClient pins={pins} />;
 }

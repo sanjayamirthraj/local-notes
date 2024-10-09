@@ -137,7 +137,7 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
           InfoWindowRef.current = infoWindow;
 
           // Optionally, center the map on the selected marker
-          map.setCenter({ lat: selectedPin.lat, lng: selectedPin.lng });
+          map.panTo({ lat: selectedPin.lat, lng: selectedPin.lng });
         }
       }
     });

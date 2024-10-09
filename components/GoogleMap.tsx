@@ -24,8 +24,8 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
       const { Map } = await loader.importLibrary("maps");
 
       let centerLocation = {
-        lat: 137.8685573,
-        lng: 122.256697,
+        lat: 37.868529,
+        lng: -122.256771,
       };
 
       // Get the user's current location

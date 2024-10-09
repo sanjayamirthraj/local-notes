@@ -33,7 +33,6 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-          map.setCenter(centerLocation);
         });
       }
 
@@ -50,6 +49,8 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
       };
 
       const map = new Map(mapRef.current as HTMLDivElement, options);
+
+      map.setCenter(centerLocation);
 
       // Get the user's current location
       if (navigator.geolocation) {
@@ -96,7 +97,7 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
         });
 
         // Store marker with a unique identifier (e.g., message)
-        markersRef.current.set(pin.message, marker as any);
+        markersRef.current.set(pin.message, marker as never);
 
         marker.addListener("click", () => {
           setSelectedPin(pin);
@@ -125,6 +126,7 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
       if (selectedPin) {
         const marker = markersRef.current.get(selectedPin.message);
         if (marker) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const map = (marker as any).map; // Access the map from the marker
           const infoWindow = new google.maps.InfoWindow({
             content: `<div class="dark:text-black">${selectedPin.message}</div>`,

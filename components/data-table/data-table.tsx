@@ -22,6 +22,8 @@ import {
 import { useState } from "react";
 import { DataTableViewOptions } from "./DataTableViewOptions";
 import { Input } from "@/components/ui/input";
+import { Pin } from "@/lib/types";
+import { useSelectedPin } from "@/components/SplitView";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -32,6 +34,8 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const { selectedPin, setSelectedPin } = useSelectedPin();
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -87,21 +91,27 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row) => {
+                const isSelected = row.original === selectedPin;
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={isSelected ? "selected" : ""}
+                    className={isSelected ? "bg-yellow-100" : ""}
+                    onClick={() => setSelectedPin(row.original as Pin)} // {{ edit }}
+                    style={{ cursor: "pointer" }} // {{ edit }}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell

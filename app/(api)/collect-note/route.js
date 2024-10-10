@@ -71,3 +71,5 @@ async function createNewPin(noteContent) {
     console.error("Error creating new pin:", error);
   }
 }
+
+

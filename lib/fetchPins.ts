@@ -7,7 +7,7 @@ import { Pin } from "@/lib/types";
 export const fetchPins = async (): Promise<Pin[]> => {
   try {
     const result = await sql`
-    SELECT username, latitude, longitude, message FROM location_data;
+    SELECT username, latitude, longitude, message FROM location_data ORDER BY time DESC;
     `;
     const pins = result.rows.map((row) => ({
       name: row.username,

@@ -3,8 +3,8 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Pin } from "@/lib/types";
 import GoogleMap from "./GoogleMap";
-import { columns } from "@/app/pins/columns";
 import { DataTable } from "./data-table/data-table";
+import { truncatedColumns } from "@/app/split/columns";
 
 interface SelectedPinContextType {
   selectedPin: Pin | null;
@@ -40,10 +40,14 @@ interface SplitViewClientProps {
 
 export default function SplitViewClient({ pins }: SplitViewClientProps) {
   return (
-    <div className="flex flex-row">
-      <GoogleMap pins={pins} />
-      <div className="w-1/2 px-2">
-        <DataTable columns={columns} data={pins} />
+    <div className="flex flex-col md:flex-row h-screen">
+      <GoogleMap pins={pins} className="h-1/2 md:h-auto md:w-2/3" />
+      <div className="h-1/2 md:h-auto md:w-1/3 px-1 pt-1">
+        <DataTable
+          columns={truncatedColumns}
+          data={pins}
+          columnToFilter="name"
+        />
       </div>
     </div>
   );

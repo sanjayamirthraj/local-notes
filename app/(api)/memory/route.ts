@@ -16,7 +16,7 @@ type Segment = {
 function extractTextBetweenPhrases(
   text: string,
   startPhrase: string,
-  endPhrase: string
+  endPhrase: string,
 ): string {
   const regex = new RegExp(`${startPhrase}(.*?)${endPhrase}`, "g");
   const matches = [];
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     let message = extractTextBetweenPhrases(
       transcript.toLowerCase(),
       "and",
-      "something"
+      "something",
     ).trim();
 
     if (message.startsWith(".")) {

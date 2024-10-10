@@ -15,21 +15,24 @@ type Segment = {
 
 function extractTextBetweenPhrases(
   text: string,
-  startPhrase: string,
-  endPhrase: string
+  startPhrases: string[],
+  endPhrases: string[]
 ): string {
-  const regex = new RegExp(`${startPhrase}(.*?)${endPhrase}`, "g");
+  const startPattern = startPhrases.join("|");
+  const endPattern = endPhrases.join("|");
+  const regex = new RegExp(`(${startPattern})(.*?)(${endPattern})`, "g");
   const matches = [];
   let match;
 
   while ((match = regex.exec(text)) !== null) {
-    matches.push(match[1]);
+    matches.push(match[2]); // Capture the text between start and end phrases
   }
 
-  if (matches.length == 0) throw new Error("No valid message found.");
+  if (matches.length === 0) throw new Error("No valid message found.");
 
   return matches[0];
 }
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,8 +49,8 @@ export async function POST(request: NextRequest) {
 
     let message = extractTextBetweenPhrases(
       transcript.toLowerCase(),
-      "and",
-      "something"
+      ["start map note", "clip this"],
+      ["end map note", "clip that"]
     ).trim();
 
     if (message.startsWith(".")) {
@@ -55,6 +58,8 @@ export async function POST(request: NextRequest) {
     }
 
     message = message.replace(/(^\s*\w|[.!?]\s*\w)/g, (c) => c.toUpperCase());
+
+    console.log(message);
 
     const geolocation: Geolocation = {
       latitude: data.geolocation?.latitude,

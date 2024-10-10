@@ -16,6 +16,12 @@ export const columns: ColumnDef<Pin>[] = [
     },
   },
   {
+    accessorKey: "message",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Message" />
+    ),
+  },
+  {
     accessorKey: "lat",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Latitude" />
@@ -25,12 +31,6 @@ export const columns: ColumnDef<Pin>[] = [
     accessorKey: "lng",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Longitude" />
-    ),
-  },
-  {
-    accessorKey: "message",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Message" />
     ),
   },
 ];

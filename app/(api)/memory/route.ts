@@ -1,5 +1,4 @@
 import { sql } from "@vercel/postgres";
-import { NextURL } from "next/dist/server/web/next-url";
 import { NextRequest } from "next/server";
 
 type Geolocation = {

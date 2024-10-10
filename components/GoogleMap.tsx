@@ -11,7 +11,7 @@ export default function GoogleMap({
   className,
 }: {
   pins: Pin[];
-  className: string;
+  className?: string;
 }) {
   const { selectedPin, setSelectedPin } = useSelectedPin();
 

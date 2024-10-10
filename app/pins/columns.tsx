@@ -10,6 +10,10 @@ export const columns: ColumnDef<Pin>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
+    cell: ({ getValue }) => {
+      const value = getValue<string>();
+      return value.length > 10 ? `${value.substring(0, 10)}...` : value;
+    },
   },
   {
     accessorKey: "lat",

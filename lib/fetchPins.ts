@@ -14,6 +14,7 @@ export const fetchPins = async (): Promise<Pin[]> => {
       lat: parseFloat(row.latitude),
       lng: parseFloat(row.longitude),
       message: row.message,
+      username: row.username,
     }));
     // revalidatePath("/");
     // revalidatePath("/pins");

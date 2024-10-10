@@ -6,7 +6,7 @@ export default async function Pins() {
   const pins = await fetchPins();
   return (
     <div className="p-4">
-      <DataTable columns={columns} data={pins} />
+      <DataTable columns={columns} data={pins} columnToFilter="name" />
     </div>
   );
 }

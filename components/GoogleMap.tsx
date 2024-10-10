@@ -129,7 +129,10 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const map = (marker as any).map; // Access the map from the marker
           const infoWindow = new google.maps.InfoWindow({
-            content: `<div class="dark:text-black">${selectedPin.message}</div>`,
+            content: `<div class="dark:text-black">
+                        <strong>${selectedPin.username}</strong><br />
+                        ${selectedPin.message}
+                      </div>`,
             pixelOffset: new google.maps.Size(0, -30),
           });
 

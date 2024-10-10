@@ -54,6 +54,8 @@ export async function POST(request: NextRequest) {
       message = message.substring(1).trim();
     }
 
+    message = message.replace(/(^\s*\w|[.!?]\s*\w)/g, (c) => c.toUpperCase());
+
     const geolocation: Geolocation = {
       latitude: data.geolocation?.latitude,
       longitude: data.geolocation?.longitude,

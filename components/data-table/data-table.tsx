@@ -24,15 +24,18 @@ import { DataTableViewOptions } from "./DataTableViewOptions";
 import { Input } from "@/components/ui/input";
 import { Pin } from "@/lib/types";
 import { useSelectedPin } from "@/components/SplitView";
+import { Combobox } from "@/components/ui/combobox";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  columnToFilter: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  columnToFilter,
 }: DataTableProps<TData, TValue>) {
   const { selectedPin, setSelectedPin } = useSelectedPin();
 
@@ -56,9 +59,16 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const items = Array.from(
+    new Set(data.map((item) => item[columnToFilter])),
+  ).map((uniqueValue) => ({
+    value: uniqueValue,
+    label: uniqueValue,
+  }));
+
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center pb-2">
         <Input
           placeholder="Filter messages..."
           value={(table.getColumn("message")?.getFilterValue() as string) ?? ""}
@@ -66,6 +76,18 @@ export function DataTable<TData, TValue>({
             table.getColumn("message")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
+        />
+        <Combobox
+          items={items}
+          searchLabel={columnToFilter}
+          onSelect={(value) => {
+            const currentValue = table
+              .getColumn(columnToFilter)
+              ?.getFilterValue() as string;
+            table
+              .getColumn(columnToFilter)
+              ?.setFilterValue(currentValue === value ? "" : value);
+          }}
         />
         <DataTableViewOptions table={table} />
       </div>

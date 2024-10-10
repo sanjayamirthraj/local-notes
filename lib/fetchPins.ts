@@ -7,13 +7,14 @@ import { Pin } from "@/lib/types";
 export const fetchPins = async (): Promise<Pin[]> => {
   try {
     const result = await sql`
-    SELECT latitude, longitude, message, username FROM location_data;
+    SELECT username, latitude, longitude, message FROM location_data ORDER BY time DESC;
     `;
     const pins = result.rows.map((row) => ({
+      name: row.username,
       lat: parseFloat(row.latitude),
       lng: parseFloat(row.longitude),
       message: row.message,
-      username: row.username
+      username: row.username,
     }));
     // revalidatePath("/");
     // revalidatePath("/pins");

@@ -4,8 +4,15 @@ import React, { useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { Pin } from "@/lib/types";
 import { useSelectedPin } from "@/components/SplitView";
+import { cn } from "@/lib/utils";
 
-export default function GoogleMap({ pins }: { pins: Pin[] }) {
+export default function GoogleMap({
+  pins,
+  className,
+}: {
+  pins: Pin[];
+  className?: string;
+}) {
   const { selectedPin, setSelectedPin } = useSelectedPin();
 
   const mapRef = React.useRef<HTMLDivElement>(null);
@@ -130,7 +137,7 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
           const map = (marker as any).map; // Access the map from the marker
           const infoWindow = new google.maps.InfoWindow({
             content: `<div class="dark:text-black">
-                        <strong>${selectedPin.username}</strong><br />
+                        <strong>${selectedPin.name}</strong><br />
                         ${selectedPin.message}
                       </div>`,
             pixelOffset: new google.maps.Size(0, -30),
@@ -146,5 +153,5 @@ export default function GoogleMap({ pins }: { pins: Pin[] }) {
     });
   }, [selectedPin]);
 
-  return <div className="h-screen w-screen" ref={mapRef} />;
+  return <div className={cn("h-screen w-screen", className)} ref={mapRef} />;
 }

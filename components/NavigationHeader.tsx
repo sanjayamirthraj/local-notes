@@ -2,6 +2,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Menu, MapPinned } from "lucide-react";
 import Link from "next/link";
 
@@ -61,16 +62,18 @@ export function NavigationHeader() {
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <div className="ml-auto flex-1 sm:flex-initial">
           <div className="flex justify-end gap-2">
-            <div className="text-xs text-muted-foreground my-auto mr-1">
+            <div className="text-xs text-muted-foreground my-auto mr-1 flex items-center gap-1">
+              <Link href="https://github.com/sanjayamirthraj/local-notes/">
+                <GitHubLogoIcon className="h-4 w-4 hover:text-foreground" />
+              </Link>
               created by{" "}
               <Button asChild variant={"link"} className="text-xs p-0">
-                <Link href="https://x.com/sanjayamirthraj">Sanjay</Link>
-              </Button>
-              ,{" "}
+                <Link href="https://x.com/sanjayamirthraj">Sanjay, </Link>
+              </Button>{" "}
               <Button asChild variant={"link"} className="text-xs p-0">
-                <Link href="https://x.com/jamesoncrate">Jameson</Link>
+                <Link href="https://x.com/jamesoncrate">Jameson,</Link>
               </Button>
-              , &{" "}
+              &{" "}
               <Button asChild variant={"link"} className="text-xs p-0">
                 <Link href="https://x.com/ravi_riley">Ravi</Link>
               </Button>

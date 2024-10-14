@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NavigationHeader } from "@/components/NavigationHeader";
 import { SelectedPinProvider } from "@/components/SplitView";
+import { Analytics } from '@vercel/analytics/react';
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -40,6 +42,8 @@ export default function RootLayout({
           <NavigationHeader />
           <SelectedPinProvider>{children}</SelectedPinProvider>
         </ThemeProvider>
+        <Analytics />
+
       </body>
     </html>
   );

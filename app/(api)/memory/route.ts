@@ -16,7 +16,7 @@ type Segment = {
 function extractTextBetweenPhrases(
   text: string,
   startPhrases: string[],
-  endPhrases: string[]
+  endPhrases: string[],
 ): string {
   const startPattern = startPhrases.join("|");
   const endPattern = endPhrases.join("|");
@@ -33,12 +33,19 @@ function extractTextBetweenPhrases(
   return matches[0];
 }
 
-
 export async function POST(request: NextRequest) {
   try {
     const reqUrl = request.url;
     const { searchParams } = new URL(reqUrl);
     const uid = searchParams.get("uid");
+
+    // New code to fetch username based on uid
+    const usernameResult = await sql`
+      SELECT username FROM uid_to_username WHERE uid = ${uid};
+    `;
+
+    const username = usernameResult.rows.length > 0 ? usernameResult.rows[0].username : null;
+
     const text = await request.text();
     const data = JSON.parse(text);
 
@@ -50,7 +57,7 @@ export async function POST(request: NextRequest) {
     let message = extractTextBetweenPhrases(
       transcript.toLowerCase(),
       ["start map note", "clip this"],
-      ["end map note", "clip that"]
+      ["end map note", "clip that"],
     ).trim();
 
     if (message.startsWith(".")) {
@@ -71,8 +78,8 @@ export async function POST(request: NextRequest) {
 
     await sql`
     INSERT INTO location_data (latitude, longitude, message, username, user_id)
-    VALUES (${geolocation.latitude}, ${geolocation.longitude}, ${message}, ${uid}, ${uid});
-  `;
+    VALUES (${geolocation.latitude}, ${geolocation.longitude}, ${message}, ${username || uid}, ${uid});
+    `;
   } catch (error) {
     console.error("Error: " + error.message);
     return new Response(`Webhook error: ${error.message}`, {

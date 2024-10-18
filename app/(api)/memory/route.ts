@@ -1,4 +1,5 @@
 import { sql } from "@vercel/postgres";
+import { revalidatePath } from "next/cache";
 import { NextRequest } from "next/server";
 
 type Geolocation = {
@@ -44,7 +45,8 @@ export async function POST(request: NextRequest) {
       SELECT username FROM uid_to_username WHERE uid = ${uid};
     `;
 
-    const username = usernameResult.rows.length > 0 ? usernameResult.rows[0].username : null;
+    const username =
+      usernameResult.rows.length > 0 ? usernameResult.rows[0].username : null;
 
     const text = await request.text();
     const data = JSON.parse(text);
@@ -80,6 +82,10 @@ export async function POST(request: NextRequest) {
     INSERT INTO location_data (latitude, longitude, message, username, user_id)
     VALUES (${geolocation.latitude}, ${geolocation.longitude}, ${message}, ${username || uid}, ${uid});
     `;
+
+    revalidatePath("/");
+    revalidatePath("/pins");
+    revalidatePath("/map");
   } catch (error) {
     console.error("Error: " + error.message);
     return new Response(`Webhook error: ${error.message}`, {
